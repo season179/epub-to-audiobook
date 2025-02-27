@@ -1,0 +1,29 @@
+[tool.poetry]
+name = "epub-to-audiobook"
+version = "0.1.0"
+description = "A command-line application that converts ePub files into audiobooks using Fish Audio's text-to-speech technology"
+authors = ["Season Saw <season.saw@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "~3.11"
+ebooklib = "^0.18.0"  # For parsing ePub files
+pydantic = "^2.5.0"   # For data validation
+typer = "^0.9.0"      # For CLI interface
+rich = "^13.6.0"      # For beautiful terminal output
+requests = "^2.31.0"  # For API requests to Fish Audio
+beautifulsoup4 = "^4.12.0"  # For parsing HTML content in ePubs
+pydub = "^0.25.1"     # For audio processing
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+black = "^23.9.0"
+isort = "^5.12.0"
+pylint = "^3.0.0"
+
+[tool.poetry.scripts]
+epub2audio = "epub_to_audiobook.cli:app"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
