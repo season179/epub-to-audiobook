@@ -95,6 +95,35 @@ For more options:
 poetry run python -m epub_to_audiobook.cli --help
 ```
 
+## Development Plan
+
+This project will be developed in phases, focusing on one component at a time:
+
+### Phase 1: TTS Engine Evaluation
+- Evaluate various text-to-speech models and engines
+- Compare quality, cost, and performance metrics
+- Select the most cost-effective option without significant quality sacrifices
+- Implement interfaces for the selected TTS engines
+
+### Phase 2: ePub Processing
+- Develop functionality to extract and parse ePub file contents
+- Build table of contents extraction capabilities
+- Create a content selection system to identify which parts of an ePub should be converted
+- Implement content filtering to exclude non-essential elements (e.g., indexes, references)
+
+### Phase 3: Content Chunking
+- Develop intelligent text chunking algorithms that respect natural language boundaries
+- Ensure chunks don't split sentences or paragraphs inappropriately
+- Optimize chunk sizes for TTS processing efficiency
+- Implement adaptive chunking based on content type (dialogue, descriptive text, etc.)
+
+### Phase 4: Integration and Workflow
+- Combine all components into a unified workflow
+- Create an end-to-end pipeline: ePub parsing → content selection → chunking → TTS conversion
+- Develop progress tracking and error handling
+- Build user-friendly command-line interface
+- Add configuration options for customizing the conversion process
+
 ## License
 
 MIT License
