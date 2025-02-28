@@ -1,1 +1,0 @@
-Chapter 1. (break) Introduction to Building AI Applications with Foundation Models (break) If I could use only one word to describe AI post-2020, it’d be scale. (long-break) Chapter 2. (break) The scaling up of AI models has two major consequences. (long-break) The End.
