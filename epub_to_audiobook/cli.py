@@ -1,71 +1,148 @@
-"""Command-line interface for the ePub to Audiobook converter."""
+"""
+Command line interface for the EPUB to Audiobook converter using Fish Audio TTS.
+"""
 
-import os
+import argparse
+import sys
 from pathlib import Path
-from typing import Optional
 
-import typer
-from rich.console import Console
-from rich.progress import Progress, SpinnerColumn, TextColumn
-
-from epub_to_audiobook.models.config import Settings
-from epub_to_audiobook.services.converter import EpubConverter
-
-app = typer.Typer(help="Convert ePub files to audiobooks using Fish Audio.")
-console = Console()
+from epub_to_audiobook.fish_audio import FishAudioTTS
 
 
-@app.command()
-def convert(
-    epub_path: Path = typer.Argument(
-        ..., help="Path to the ePub file to convert", exists=True, file_okay=True, dir_okay=False
-    ),
-    output_dir: Optional[Path] = typer.Option(
-        None, "--output", "-o", help="Directory to save the audiobook files"
-    ),
-    voice: str = typer.Option(
-        "default", "--voice", "-v", help="Voice to use for the audiobook"
-    ),
-    speed: float = typer.Option(
-        1.0, "--speed", "-s", help="Speech speed (0.5 to 2.0)", min=0.5, max=2.0
-    ),
-):
-    """Convert an ePub file to an audiobook."""
-    if not output_dir:
-        output_dir = Path(os.path.splitext(str(epub_path))[0])
-    
-    output_dir.mkdir(exist_ok=True, parents=True)
-    
-    settings = Settings(
-        voice=voice,
-        speed=speed,
-        output_dir=output_dir,
+def main():
+    """Main entry point for the CLI."""
+    parser = argparse.ArgumentParser(
+        description="Convert text to speech using Fish Audio's TTS API",
+        formatter_class=argparse.ArgumentDefaultsHelpFormatter,
     )
-    
-    console.print(f"Converting [bold]{epub_path}[/bold] to audiobook...")
-    console.print(f"Using voice: [green]{voice}[/green] at speed: [green]{speed}x[/green]")
-    console.print(f"Output directory: [blue]{output_dir}[/blue]")
-    
-    # This will be implemented in Phase 1 and 2
-    with Progress(
-        SpinnerColumn(),
-        TextColumn("[progress.description]{task.description}"),
-        console=console,
-    ) as progress:
-        task = progress.add_task("Analyzing ePub file...", total=None)
-        # TODO: Implement the actual conversion process
-        # converter = EpubConverter(epub_path, settings)
-        # converter.convert()
-        
-    console.print("[bold green]Conversion completed![/bold green]")
+
+    parser.add_argument(
+        "text",
+        help="Text to convert to speech. Use quotes for text with spaces. "
+        "For longer text, use --file instead.",
+        nargs="?",
+    )
+
+    parser.add_argument(
+        "--file",
+        "-f",
+        help="Path to a text file containing the text to convert",
+        type=Path,
+    )
+
+    parser.add_argument(
+        "--output",
+        "-o",
+        help="Path to save the output audio file",
+        type=Path,
+        default=Path("output.mp3"),
+    )
+
+    parser.add_argument(
+        "--reference-id",
+        "-r",
+        help="ID of a voice model to use",
+    )
+
+    parser.add_argument(
+        "--format",
+        help="Output audio format",
+        choices=["mp3", "wav", "pcm"],
+        default="wav",
+    )
+
+    parser.add_argument(
+        "--bitrate",
+        help="MP3 bitrate (only applicable if format is mp3)",
+        type=int,
+        choices=[64, 128, 192],
+        default=128,
+    )
+
+    parser.add_argument(
+        "--chunk-length",
+        help="Length of each chunk in milliseconds",
+        type=int,
+        default=200,
+        choices=range(100, 301),
+        metavar="[100-300]",
+    )
+
+    parser.add_argument(
+        "--no-normalize",
+        help="Disable text normalization",
+        action="store_true",
+    )
+
+    parser.add_argument(
+        "--latency",
+        help="Latency mode",
+        choices=["normal", "balanced"],
+        default="normal",
+    )
+
+    args = parser.parse_args()
+
+    # Validate input arguments
+    if not args.text and not args.file:
+        parser.error("Either text or --file must be provided")
+
+    if args.text and args.file:
+        parser.error("Cannot provide both text and --file")
+
+    # Get the text to convert
+    if args.file:
+        try:
+            with open(args.file, "r", encoding="utf-8") as f:
+                text = f.read()
+        except FileNotFoundError:
+            print(f"Error: File not found: {args.file}", file=sys.stderr)
+            sys.exit(1)
+        except Exception as e:
+            print(f"Error reading file: {e}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        text = args.text
+
+    # Create the TTS instance
+    try:
+        tts = FishAudioTTS()
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    except ImportError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Create the output directory if it doesn't exist
+    output_dir = args.output.parent
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
+
+    # Convert the text to speech
+    try:
+        print("Converting text to speech...", file=sys.stderr)
+        with open(args.output, "wb") as output_file:
+            tts.text_to_speech(
+                text=text,
+                output_file=output_file,
+                reference_id=args.reference_id,
+                audio_format=args.format,
+                bitrate=args.bitrate,
+                chunk_length=args.chunk_length,
+                normalize=not args.no_normalize,
+                latency=args.latency,
+            )
+        print(f"Audio saved to {args.output}", file=sys.stderr)
+    except Exception as e:
+        print(f"Error converting text to speech: {e}", file=sys.stderr)
+        sys.exit(1)
 
 
-@app.command()
-def version():
-    """Show the application version."""
-    from epub_to_audiobook import __version__
-    console.print(f"ePub to Audiobook Converter v{__version__}")
+def app():
+    """Entry point for the CLI when installed via pip."""
+    main()
 
 
 if __name__ == "__main__":
-    app()
+    main()

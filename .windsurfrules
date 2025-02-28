@@ -1,1 +1,3 @@
-- Use Fish Audio for text-to-speech. Check out their documentation at https://docs.fish.audio/introduction if you need more information.
+- Use Fish Audio for text-to-speech.
+- Refer to `fish_audio_docs` directory for Fish Audio documentation.
+- Use dotenv.

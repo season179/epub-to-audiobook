@@ -1,7 +1,7 @@
 """
-ePub to Audiobook Converter.
+EPUB to Audiobook converter package.
 
-A command-line application that converts ePub files into audiobooks 
+This package provides functionality to convert EPUB files to audiobooks
 using Fish Audio's text-to-speech technology.
 """
 
