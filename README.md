@@ -97,4 +97,6 @@ poetry run python -m epub_to_audiobook.cli --help
 
 ## License
 
-(To be determined)
+MIT License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
