@@ -42,7 +42,7 @@ def main():
         "--engine",
         help="TTS engine to use",
         choices=["fish", "kokoro"],
-        default="fish",
+        default="kokoro",
     )
     
     # Fish Audio specific arguments

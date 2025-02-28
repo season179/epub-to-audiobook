@@ -10,8 +10,8 @@ This application allows users to convert their ePub books into high-quality audi
 
 - Parse ePub files to extract text content
 - Convert text to natural-sounding speech using multiple TTS engines:
+  - Kokoro TTS - an open-weight local TTS model with 82M parameters (default)
   - Fish Audio TTS - a high-quality cloud-based TTS service
-  - Kokoro TTS - an open-weight local TTS model with 82M parameters
 - Support for adjusting voice parameters (speed, pitch, voice selection)
 - Save output as MP3 or WAV files
 - Progress tracking for long conversions
@@ -54,55 +54,6 @@ Kokoro is an open-weight TTS model with 82 million parameters that runs locally.
 - Customizable voice options
 - Adjustable speech speed
 
-## Development Plan
-
-### Phase 1: Project Setup and ePub Parsing
-
-1. Set up project structure and configuration
-   - Initialize Poetry project
-   - Configure dependencies
-   - Set up basic CLI structure
-
-2. Implement ePub parsing
-   - Extract metadata (title, author, chapters)
-   - Extract text content from ePub files
-   - Handle different ePub formats and structures
-
-### Phase 2: Text Processing and TTS Integration
-
-3. Implement text processing
-   - Clean and prepare text for TTS conversion
-   - Split content into appropriate chunks for processing
-   - Handle formatting, special characters, and dialogue
-
-4. Integrate with TTS Engines
-   - Implement Fish Audio integration (cloud-based TTS)
-   - Implement Kokoro integration (local open-source TTS)
-   - Support voice selection and customization
-
-### Phase 3: Audio Processing and Output
-
-5. Implement audio processing
-   - Save audio segments
-   - Merge audio segments into chapters
-   - Add metadata to audio files
-
-6. Create progress tracking and user feedback
-   - Display conversion progress
-   - Handle errors gracefully
-   - Provide estimated completion time
-
-### Phase 4: Refinement and Additional Features
-
-7. Optimize performance
-   - Implement parallel processing for faster conversion
-   - Add caching mechanisms
-
-8. Add advanced features
-   - Support for customizing output format
-   - Add ability to resume interrupted conversions
-   - Support for batch processing of multiple books
-
 ## Installation & Usage
 
 ### Installation
@@ -128,14 +79,14 @@ brew install espeak-ng
 Basic usage:
 
 ```bash
-# Using Fish Audio TTS (default)
+# Using Kokoro TTS (default)
 poetry run python -m epub_to_audiobook.cli "Hello world" --output hello.wav
 
-# Using Kokoro TTS
-poetry run python -m epub_to_audiobook.cli "Hello world" --engine kokoro --output hello.wav
+# Using Fish Audio TTS
+poetry run python -m epub_to_audiobook.cli "Hello world" --engine fish --output hello.wav
 
 # Convert a text file using Kokoro TTS
-poetry run python -m epub_to_audiobook.cli --file mybook.txt --engine kokoro --output mybook.mp3 --format mp3 --voice af_heart
+poetry run python -m epub_to_audiobook.cli --file mybook.txt --output mybook.mp3 --format mp3 --voice af_heart
 ```
 
 For more options:
