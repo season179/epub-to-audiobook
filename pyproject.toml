@@ -12,6 +12,7 @@ python-dotenv = "^0.20.0"
 kokoro = ">=0.8.2"
 soundfile = "^0.13.1"
 pydub = "^0.25.1"
+ebooklib = "^0.18"
 
 [tool.poetry.group.dev.dependencies]
 pytest = "^7.4.0"

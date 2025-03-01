@@ -54,6 +54,46 @@ Kokoro is an open-weight TTS model with 82 million parameters that runs locally.
 - Customizable voice options
 - Adjustable speech speed
 
+## EPUB Handler
+
+The application includes a dedicated module for handling EPUB files. Here's how to use it:
+
+```python
+from epub_to_audiobook.epub_handler import extract_toc
+
+# Extract table of contents from an EPUB file
+toc = extract_toc('/path/to/your/book.epub')
+
+# Process the table of contents
+for item in toc:
+    print(f"Title: {item['title']} (Level {item['level']})")
+    
+    # Access the content link
+    if item['href']:
+        print(f"Content link: {item['href']}")
+    
+    # Process children if any
+    for child in item['children']:
+        print(f"  Subtitle: {child['title']} (Level {child['level']})")
+```
+
+The extracted table of contents is returned as a list of dictionaries, where each entry contains:
+- `title`: The title of the section
+- `href`: The link to the section content
+- `level`: The nesting level of the section
+- `children`: A list of child sections (if any)
+
+### Example Script
+
+An example script is provided to demonstrate how to use the EPUB handler:
+
+```bash
+# Run the example script with your EPUB file
+./examples/epub_toc_example.py /path/to/your/book.epub
+```
+
+The script will print out the table of contents in a readable format and also show the raw data structure.
+
 ## Installation & Usage
 
 ### Installation
@@ -106,8 +146,8 @@ This project will be developed in phases, focusing on one component at a time:
 - Implement interfaces for the selected TTS engines
 
 ### Phase 2: ePub Processing
-- Develop functionality to extract and parse ePub file contents
-- Build table of contents extraction capabilities
+- ✅ Develop functionality to extract and parse ePub file contents
+- ✅ Build table of contents extraction capabilities
 - Create a content selection system to identify which parts of an ePub should be converted
 - Implement content filtering to exclude non-essential elements (e.g., indexes, references)
 
